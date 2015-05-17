@@ -9,7 +9,7 @@ target_text = ['subscribe to cat facts', 'catnip', 'cat', 'cats']
 processed = ['crasook', 'craziol']
 
 r = praw.Reddit('CatFacts by SubscribeToCatFacts')
-r.login('SubscribeToCatFacts', 'BroadwayCats')
+r.login()
 r.config.api_request_delay = 120
 
 print("Launching CatFacts...")
