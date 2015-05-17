@@ -32,7 +32,7 @@ class CatFacts:
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
 
-        comment_processor = self.scheduler.add_job(self.process_comments, 'interval', minutes=1)
+        comment_processor = self.scheduler.add_job(self.process_comments, 'interval', minutes=5)
         print("Scheduler configured!")
 
     @staticmethod
