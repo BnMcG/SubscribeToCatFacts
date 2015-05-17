@@ -69,7 +69,7 @@ class CatFacts:
                             try:
                                 comment.reply("Meow! Here is today's cat fact: " + self.get_fact() + "For more facts,"
                                                                                                      " reply with "
-                                                                                                     "catnip!")
+                                                                                                     "[catnip!](https://www.reddit.com/r/subscribetocatfacts)")
 
                                 print("Replied to comment " + comment.id + " with a fact!")
                             except praw.errors.RateLimitExceeded:
