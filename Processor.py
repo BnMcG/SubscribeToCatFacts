@@ -31,7 +31,6 @@ class RedditCommentProcessor:
         """:type : list[praw.objects.Comment] """
 
         for comment in comments:
-            print("Comment (" + comment.id + "): " + comment.body)
             for phrase in self.target_phrases:
                 if phrase.lower() in comment.body.lower() and "meow" not in comment.body.lower():
                     print("Comment " + comment.id + " matched against phrase " + phrase)
