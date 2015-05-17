@@ -36,13 +36,12 @@ class RedditCommentProcessor:
                 if phrase.lower() in comment.body.lower() and "meow" not in comment.body.lower():
                     print("Comment " + comment.id + " matched against phrase " + phrase)
 
-                    if "catnip" not in phrase.lower() or "i would like to subscribe to cat facts" not in phrase.lower():
+                    if "catnip" in phrase.lower() or "i would like to subscribe to cat facts" in phrase.lower():
+                        # If the user replied with these phrases we know they want a response!
+                        matched_comments.append(comment)
+                    else:
                         # Play a chance game as to whether to post a comment!
-                        # Currently a 20% chance of posting a comment
                         if random.randrange(0, 100) < int(self.percentage_chance):
                             matched_comments.append(comment)
-                    else:
-                        # If the user replied with catnip we know they want a response!
-                        matched_comments.append(comment)
 
         return matched_comments
