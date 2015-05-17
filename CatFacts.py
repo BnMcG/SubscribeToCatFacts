@@ -67,7 +67,7 @@ class CatFacts:
 
                             # Reply to comment with a fact!
                             try:
-                                comment.reply("Meow! Here is today's cat fact: " + self.get_fact() + "For more facts,"
+                                comment.reply("Meow! Here is today's cat fact: " + self.get_fact() + " For more facts,"
                                                                                                      " reply with "
                                                                                                      "[catnip](https://www.reddit.com/r/subscribetocatfacts)!")
 
