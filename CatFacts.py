@@ -6,7 +6,7 @@ import urllib.request
 
 target_text = ['subscribe to cat facts', 'catnip', 'cat', 'cats']
 
-processed = ['crasook', 'craziol']
+processed = []
 
 r = praw.Reddit('CatFacts by SubscribeToCatFacts')
 r.login()
