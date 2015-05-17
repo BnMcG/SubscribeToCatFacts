@@ -59,7 +59,7 @@ class CatFacts:
     def process_comments(self):
         try:
             sr = self.reddit.get_subreddit(self.build_subreddit_list())
-            hot_posts = sr.get_hot(limit=100)  # Get hot posts in the subreddit...
+            hot_posts = sr.get_hot(limit=35)  # Get hot posts in the subreddit...
 
             for p in hot_posts:
                 print("Submission: " + p.title)
