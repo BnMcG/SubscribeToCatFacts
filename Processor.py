@@ -3,6 +3,7 @@ __author__ = 'bmagee'
 import praw
 import random
 
+
 class RedditCommentProcessor:
     target_phrases = []  # Phrases to look for in comments
     percentage_chance = None  # Chance of posting a comment
