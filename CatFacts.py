@@ -42,9 +42,23 @@ class CatFacts:
         obj = json.loads(str_response)
         return obj["facts"][0]
 
+    @staticmethod
+    def build_subreddit_list():
+        file = open('config/subreddits.csv')
+        file_contents = file.read()
+        split = file_contents.split(',')
+        file.close()
+
+        subreddits = ''
+
+        for subreddit in split:
+            subreddits += subreddit + "+"
+
+        return subreddits
+
     def process_comments(self):
         try:
-            sr = self.reddit.get_subreddit('jimmiescrew+subscribetocatfacts')
+            sr = self.reddit.get_subreddit(self.build_subreddit_list())
             hot_posts = sr.get_hot()  # Get hot posts in the subreddit...
 
             for p in hot_posts:
