@@ -3,50 +3,74 @@ import praw
 from praw.helpers import comment_stream
 import json
 import urllib.request
-
-target_text = ['subscribe to cat facts', 'catnip', 'cat', 'cats']
+from ProcessedContentHandler import ProcessedContentHandler
+from Processor import RedditCommentProcessor
 
 processed = []
 
-r = praw.Reddit('CatFacts by SubscribeToCatFacts')
-r.login()
-r.config.api_request_delay = 120
 
-print("Launching CatFacts...")
+class CatFacts:
+    reddit = None  # Reddit instance used to communicate with Reddit
+    processed_comments = []  # Processed comments so that we don't re-post to comment's already found
 
-def comments():
-    try:
-        sr = r.get_subreddit('aww')
-        hot_posts = sr.get_hot()
+    def __init__(self):
+        self.reddit = praw.Reddit('CatFacts by SubscribeToCatFacts')  # Reddit requires a unique user agent
+        self.reddit.login()  # Reddit login details will be set in the praw.ini file. See praw's documentation.
 
-        for p in hot_posts:
-            print("Submission: " + p.title)
-            p.replace_more_comments()
-            flat_comments = praw.helpers.flatten_tree(p.comments)
-            for c in flat_comments:
-                print("Comment: " + c.id)
-                for t in target_text:
-                    if t in c.body and c.id not in processed and "Meow" not in c.body:
-                        print("Comment text: " + c.body)
-                        url_response = urllib.request.urlopen("http://catfacts-api.appspot.com/api/facts")
-                        str_response = url_response.readall().decode('utf-8')
-                        obj = json.loads(str_response)
-                        fact = obj["facts"][0]
+        # Get any previously processed comments as the application may have crashed / Reddit may have gone down
+        self.processed_comments = ProcessedContentHandler.get_processed_comments()
 
-                        c.reply("Meow! Here is today's cat fact: " + fact + " For more facts, reply with catnip!"
-                                                                            "\n"
-                                                                            "\n"
-                                                                            "\n"
-                                                                            "\n"
-                                                                            "------------------\n"
-                                                                            "Disclaimer: I am new. Please PM me if you find me annoying!")
-                        processed.append(c.id)
-                        time.sleep(120)
-    except praw.errors.RateLimitExceeded:
-        print("Rate limit exceeded! Resting for 2 minutes...")
-        time.sleep(120)
-        print("Well rested! Begin searching again!")
+        # Let the user know that the program has launched!
+        print("CatFacts is online...")
+
+    @staticmethod
+    def get_fact():
+        url_response = urllib.request.urlopen("http://catfacts-api.appspot.com/api/facts")
+        str_response = url_response.readall().decode('utf-8')
+        obj = json.loads(str_response)
+        return obj["facts"][0]
+
+    def process_comments(self):
+        try:
+            sr = self.reddit.get_subreddit('jimmiescrew')
+            hot_posts = sr.get_hot()  # Get hot posts in the subreddit...
+
+            for p in hot_posts:
+                print("Submission: " + p.title)
+                p.replace_more_comments()
+                flat_comments = praw.helpers.flatten_tree(p.comments)
+
+                comments_processor = RedditCommentProcessor()
+
+                matched_comments = comments_processor.process_comments(flat_comments)
+                """:type : list[praw.objects.Comment] """
+
+                if matched_comments is not None:
+                    print("Matched comments detected in thread!")
+                    for comment in matched_comments:
+                        if comment.id not in self.processed_comments:
+                            # Mark comment as processed
+                            ProcessedContentHandler.handle_processed_comment(comment.id)
+                            self.processed_comments.append(comment.id)
+
+                            # Reply to comment with a fact!
+                            try:
+                                comment.reply("Meow! Here is today's cat fact: " + self.get_fact() + "For more facts,"
+                                                                                                     " reply with "
+                                                                                                     "catnip!")
+
+                                print("Replied to comment " + comment.id + " with a fact!")
+                            except praw.errors.RateLimitExceeded:
+                                print("Rate limit exceeded posting comment!")
+
+        except praw.errors.RateLimitExceeded:
+            print("Rate limit exceeded processing comments!")
+            time.sleep(60)
+
+# Launch the program!
+c = CatFacts()
 
 while True:
-    comments()
-    time.sleep(10)
+    c.process_comments()
+    print("All hot threads processed... Sleeping for 20 seconds before next run.")
+    time.sleep(20)
