@@ -5,6 +5,7 @@ import json
 import urllib.request
 from ProcessedContentHandler import ProcessedContentHandler
 from Processor import RedditCommentProcessor
+from apscheduler.schedulers.background import BackgroundScheduler
 
 processed = []
 
@@ -12,6 +13,7 @@ processed = []
 class CatFacts:
     reddit = None  # Reddit instance used to communicate with Reddit
     processed_comments = []  # Processed comments so that we don't re-post to comment's already found
+    scheduler = None
 
     def __init__(self):
         self.reddit = praw.Reddit('CatFacts by SubscribeToCatFacts')  # Reddit requires a unique user agent
@@ -20,8 +22,18 @@ class CatFacts:
         # Get any previously processed comments as the application may have crashed / Reddit may have gone down
         self.processed_comments = ProcessedContentHandler.get_processed_comments()
 
+        # Setup the scheduler to run tasks on intervals
+        self.setup_scheduler()
+
         # Let the user know that the program has launched!
         print("CatFacts is online...")
+
+    def setup_scheduler(self):
+        self.scheduler = BackgroundScheduler()
+        self.scheduler.start()
+
+        comment_processor = self.scheduler.add_job(self.process_comments, 'interval', seconds=10)
+        print("Scheduler configured!")
 
     @staticmethod
     def get_fact():
@@ -71,6 +83,4 @@ class CatFacts:
 c = CatFacts()
 
 while True:
-    c.process_comments()
-    print("All hot threads processed... Sleeping for 20 seconds before next run.")
-    time.sleep(20)
+    time.sleep(0.001)  # Keeps the application open... Terrible fix but seems to work
