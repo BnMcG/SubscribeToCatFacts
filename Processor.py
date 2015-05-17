@@ -1,6 +1,7 @@
 __author__ = 'bmagee'
 
 import praw
+import random
 
 class RedditCommentProcessor:
     target_phrases = []  # Phrases to look for in comments
@@ -26,9 +27,16 @@ class RedditCommentProcessor:
         for comment in comments:
             print("Comment (" + comment.id + "): " + comment.body)
             for phrase in self.target_phrases:
-                print("Attempting to match comment " + comment.id + " against phrase: " + phrase + ".")
                 if phrase.lower() in comment.body.lower() and "meow" not in comment.body.lower():
                     print("Comment " + comment.id + " matched against phrase " + phrase)
-                    matched_comments.append(comment)
+
+                    if phrase.lower() is not "catnip":
+                        # Play a chance game as to whether to post a comment!
+                        # Currently a 20% chance of posting a comment
+                        if random.randrange(0, 100) < 20:
+                            matched_comments.append(comment)
+                    else:
+                        # If the user replied with catnip we know they want a response!
+                        matched_comments.append(comment)
 
         return matched_comments
