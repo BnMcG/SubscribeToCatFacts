@@ -44,7 +44,7 @@ class CatFacts:
 
     def process_comments(self):
         try:
-            sr = self.reddit.get_subreddit('jimmiescrew')
+            sr = self.reddit.get_subreddit('jimmiescrew+subscribetocatfacts')
             hot_posts = sr.get_hot()  # Get hot posts in the subreddit...
 
             for p in hot_posts:
