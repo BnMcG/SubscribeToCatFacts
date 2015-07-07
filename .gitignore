@@ -58,3 +58,6 @@ target/
 
 # JetBrains
 .idea/
+
+# PRAW configuration
+praw.ini

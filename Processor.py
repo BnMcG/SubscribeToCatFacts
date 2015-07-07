@@ -2,7 +2,7 @@ __author__ = 'bmagee'
 
 import praw
 import random
-
+import re
 
 class RedditCommentProcessor:
     target_phrases = []  # Phrases to look for in comments
@@ -32,7 +32,8 @@ class RedditCommentProcessor:
 
         for comment in comments:
             for phrase in self.target_phrases:
-                if phrase.lower() in comment.body.lower() and "meow" not in comment.body.lower():
+                expression = re.compile(r'(.)*\b' + phrase + r'\b(.)*', re.IGNORECASE)
+                if expression.match(comment.body.lower()) is not None and "meow" not in comment.body.lower():
                     print("Comment " + comment.id + " matched against phrase " + phrase)
 
                     if "catnip" in phrase.lower() or "i would like to subscribe to cat facts" in phrase.lower():

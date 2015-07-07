@@ -17,7 +17,7 @@ class CatFacts:
 
     def __init__(self):
         self.reddit = praw.Reddit('CatFacts by SubscribeToCatFacts')  # Reddit requires a unique user agent
-        self.reddit.login()  # Reddit login details will be set in the praw.ini file. See praw's documentation.
+        self.reddit.refresh_access_information('39481317-jwRUVHn_jiTtxf6z3gEZqpYEBI8', True)
 
         # Get any previously processed comments as the application may have crashed / Reddit may have gone down
         self.processed_comments = ProcessedContentHandler.get_processed_comments()
@@ -32,7 +32,7 @@ class CatFacts:
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
 
-        comment_processor = self.scheduler.add_job(self.process_comments, 'interval', minutes=5)
+        comment_processor = self.scheduler.add_job(self.process_comments, 'interval', seconds=30)
         print("Scheduler configured!")
 
     @staticmethod
