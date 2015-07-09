@@ -32,7 +32,7 @@ class CatFacts:
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
 
-        comment_processor = self.scheduler.add_job(self.process_comments, 'interval', seconds=30)
+        comment_processor = self.scheduler.add_job(self.process_comments, 'interval', minutes=5)
         print("Scheduler configured!")
 
     @staticmethod
@@ -60,6 +60,7 @@ class CatFacts:
         try:
             sr = self.reddit.get_subreddit(self.build_subreddit_list())
             hot_posts = sr.get_hot(limit=35)  # Get hot posts in the subreddit...
+            self.reddit.refresh_access_information('39481317-jwRUVHn_jiTtxf6z3gEZqpYEBI8', True)
 
             for p in hot_posts:
                 print("Submission: " + p.title)
